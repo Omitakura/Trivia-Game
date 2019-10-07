@@ -12,7 +12,7 @@ var trivia = {
     currentSet: 0,
     timer: 20,
     timerOn: false,
-    timerID: '',
+    timerId: '',
     //These are all the questions and answers for the trivia game.
     questions: {
         q1: 'In Gene Roddenberrys original treatment for Star Trek, what was the name of the Starship?',
@@ -58,7 +58,7 @@ var trivia = {
         trivia.correct = 0;
         trivia.incorrect = 0;
         trivia.unanswered = 0;
-        clearInterval(trivia.timerID);
+        clearInterval(trivia.timerId);
 
         //showing the game section
         $('#game').show();
@@ -82,12 +82,12 @@ var trivia = {
 
         //setting the timer for each question to 20 seconds.
         trivia.timer = 10;
-        $('#timer').removeClass('lastSeconds');
+        $('#timer').removeClass('last-seconds');
         $('#timer').text(trivia.timer);
 
         //this is to make sure that the timer doesn't speed up
         if (!trivia.timerOn) {
-            trivia.timerID = setInterval(trivia.timerRunning, 1000);
+            trivia.timerId = setInterval(trivia.timerRunning, 1000);
         }
         //This gets all of the questions and indexes the current questions
         var questionContent = Object.values(trivia.questions)[trivia.currentSet];
@@ -104,20 +104,20 @@ var trivia = {
     },
     //this is the method to lower the counter and also give a unanswered count is the tiemr runs out without an answer
     timerRunning: function () {
-        //if the timer still has tiem let and there are still questions left to answer
+        //if the timer still has time left and there are still questions left to answer
         if (trivia.timer > -1 && trivia.currentSet < Object.keys(trivia.questions).length) {
             $('#timer').text(trivia.timer);
             trivia.timer--;
             if (trivia.timer === 4) {
-                $('#timer').addclass('lastSeconds');
+                $('#timer').addClass('last-seconds');
             }
         }
         //If time hs run out run this
         else if (trivia.timer === -1) {
             trivia.unanswered++;
             trivia.result = false;
-            clearInterval(trivia.timerID);
-            resultID = setTimeout(trivia.guessResult, 1000);
+            clearInterval(trivia.timerId);
+            resultId = setTimeout(trivia.guessResult, 1000);
             $('#results').html('<h3>No more time left!  The correct answer was ' + Object.values(trivia.answers)[trivia.currentSet] + '</h3>');
         }
         //if we got all the questions done then end the game and display results
@@ -147,19 +147,25 @@ var trivia = {
         //this is the answer to the current question asked
         var currentAnswer = Object.values(trivia.answers)[trivia.currentSet];
 
-        //if the text of the option picked matches the answer give the correct a increment
+        //if the text of the option picked matches the answer give the correct increment
         if ($(this).text() === currentAnswer) {
 
+            $(this).addClass('btn-success').removeClass('btn-info');
+
             trivia.correct++;
-            clearInterval(trivia.timerID);
-            resultID = setTimeout(trivia.guessResult, 1000);
+            clearInterval(trivia.timerId);
+            resultId = setTimeout(trivia.guessResult, 1000);
             $('#results').html('<h3>Right Choice!</h3>');
         }
         //else the wrong choice was picked and
         else {
+
+            $(this).addClass('btn-danger').removeClass('btn-info');
+
+
             trivia.incorrect++;
-            clearInterval(trivia.timerID);
-            resultID = setTimeout(trivia.guessResult, 1000);
+            clearInterval(trivia.timerId);
+            resultId = setTimeout(trivia.guessResult, 1000);
             $('#results').html('<h3>Wrong choice, try again next time! ' + currentAnswer + '</h3>');
         }
     },//end of guess check function
@@ -171,8 +177,8 @@ var trivia = {
         trivia.currentSet++;
 
         // remove the options and results
-        $('.option').remove();
-        $('#results h3').remove();
+        $('.option').empty();
+        $('#results h3').empty();
 
         // begin next question
         trivia.nextQuestion();
